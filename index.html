@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Angsuran Pinjaman Organisasi</title>
+    <!-- Tailwind CSS untuk Desain Modern -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+</head>
+<body class="bg-slate-50 font-sans antialiased text-slate-800">
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">Sistem Informasi Pinjaman Anggota</h1>
+            <p class="text-slate-600">Simulasi Angsuran Bulanan dengan Tenor 12 Bulan</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Form Input (Kiri) -->
+            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 md:col-span-1 h-fit">
+                <h2 class="text-xl font-semibold mb-4 text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-blue-500"></i> Input Pinjaman
+                </h2>
+                
+                <div class="mb-4">
+                    <label for="jumlahPinjaman" class="block text-sm font-medium text-slate-600 mb-1">Nominal Pinjaman (Rp)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 font-semibold">Rp</span>
+                        <input type="number" id="jumlahPinjaman" min="500000" step="50000" placeholder="Contoh: 1000000" 
+                            class="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">* Minimal pinjaman Rp 500.000</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Tenor / Jangka Waktu</label>
+                    <input type="text" value="12 Bulan (Tetap)" disabled 
+                        class="w-full px-3 py-2 border border-slate-200 bg-slate-50 text-slate-500 rounded-xl cursor-not-allowed font-medium">
+                </div>
+
+                <button onclick="prosesKalkulasi()" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-gears"></i> Hitung Angsuran
+                </button>
+            </div>
+
+            <!-- Hasil & Tabel (Kanan) -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Ringkasan Kartu -->
+                <div id="ringkasanKalkulasi" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Angsuran / Bulan</p>
+                        <p id="txtAngsuran" class="text-2xl font-bold text-blue-700 mt-1">Rp 0</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Total Pengembalian</p>
+                        <p id="txtTotal" class="text-2xl font-bold text-emerald-700 mt-1">Rp 0</p>
+                    </div>
+                </div>
+
+                <!-- Tabel Jadwal Angsuran -->
+                <div id="wrapperTabel" class="hidden bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-table-list text-blue-500"></i> Jadwal Pembayaran Anggota
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100/70 text-slate-600 text-xs font-semibold uppercase tracking-wider">
+                                    <th class="py-3 px-4 text-center">Bulan Ke</th>
+                                    <th class="py-3 px-4">Angsuran Bulanan</th>
+                                    <th class="py-3 px-4">Sisa Pinjaman Pokok</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyTabelAngsuran" class="text-sm divide-y divide-slate-100 text-slate-600">
+                                <!-- Data digenerate otomatis lewat Javascript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Placeholder state awal -->
+                <div id="placeholderState" class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center text-slate-400">
+                    <i class="fa-solid fa-circle-info text-4xl mb-3 text-slate-300"></i>
+                    <p>Masukkan nominal pinjaman di form sebelah kiri untuk melihat simulasi angsuran.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistem Logika Perhitungan -->
+    <script>
+        // Fungsi pembantu untuk mengubah angka menjadi format Rupiah (Rp xx.xxx)
+        function formatRupiah(angka) {
+            return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
+        }
+
+        function prosesKalkulasi() {
+            const inputPinjaman = document.getElementById('jumlahPinjaman').value;
+            const jumlahPinjaman = parseFloat(inputPinjaman);
+            const MINIMAL_PINJAMAN = 500000;
+            const TENOR = 12;
+
+            // Validasi Input
+            if (!inputPinjaman || jumlahPinjaman < MINIMAL_PINJAMAN) {
+                alert("Mohon masukkan nominal pinjaman minimal Rp 500.000");
+                return;
+            }
+
+            // Rumus Sesuai Ketentuan Anda: Rp 500rb -> Rp 55rb (Pinjaman * 0.11)
+            const angsuranPerBulan = jumlahPinjaman * 0.11;
+            const totalPengembalian = angsuranPerBulan * TENOR;
+
+            // Tampilkan elemen hasil dan sembunyikan placeholder awal
+            document.getElementById('placeholderState').classList.add('hidden');
+            document.getElementById('ringkasanKalkulasi').classList.remove('hidden');
+            document.getElementById('wrapperTabel').classList.remove('hidden');
+
+            // Isi nilai ringkasan kartu atas
+            document.getElementById('txtAngsuran').innerText = formatRupiah(angsuranPerBulan);
+            document.getElementById('txtTotal').innerText = formatRupiah(totalPengembalian);
+
+            // Bersihkan isi tabel lama jika ada perhitungan ulang
+            const tableBody = document.getElementById('bodyTabelAngsuran');
+            tableBody.innerHTML = '';
+
+            // Generate Baris Tabel Bulan 1 sampai 12
+            let sisaPokokSebelumnya = jumlahPinjaman;
+            const penguranganPokokPerBulan = jumlahPinjaman / TENOR; // Untuk simulasi penurunan sisa pokok
+
+            for (let bulan = 1; bulan <= TENOR; bulan++) {
+                sisaPokokSebelumnya -= penguranganPokokPerBulan;
+                // Cegah nilai negatif akibat pembulatan desimal JavaScript kecil
+                const sisaPokokTampil = sisaPokokSebelumnya < 0 ? 0 : sisaPokokSebelumnya;
+
+                const baris = `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3 px-4 text-center font-medium text-slate-500">${bulan}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-700">${formatRupiah(angsuranPerBulan)}</td>
+                        <td class="py-3 px-4 text-slate-500">${formatRupiah(sisaPokokTampil)}</td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', baris);
+            }
+        }
+    </script>
+</body>
+</html>
