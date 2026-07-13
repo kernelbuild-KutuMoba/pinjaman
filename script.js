@@ -3,7 +3,7 @@ const CONFIG_GITHUB = {
     username: "kernelbuild-KutuMoba",       // Ganti dengan username GitHub Anda
     repo: "pinjaman",           // Ganti dengan nama repositori web Anda
     path: "data.json",                       // Tetap data.json jika file ada di folder utama
-    token: "PASTE_TOKEN_GHP_ANDA_DISINI"    // Tempelkan kode token ghp_xxx dari Langkah 1
+    token: "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"    // Tempelkan kode token ghp_xxx dari Langkah 1
 };
 // ==========================================================
 
