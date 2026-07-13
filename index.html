@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Pinjaman Organisasi</title>
-    <!-- Tailwind CSS untuk Desain Modern -->
+    <title>Sistem Pinjaman Organisasi - GitHub Version</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://jsdelivr.net"></script>
     <!-- FontAwesome untuk Ikon -->
     <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- Hubungkan ke CSS Eksternal jika ada -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-50 font-sans antialiased text-slate-800">
 
@@ -15,146 +17,88 @@
         <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-3xl font-bold text-blue-600 mb-2">Sistem Pinjaman & Angsuran Organisasi</h1>
-            <p class="text-slate-600">Transparansi Data Pinjaman dan Simulasi Mandiri Anggota</p>
+            <p class="text-slate-600">Manajemen Transparan Berbasis Cloud & GitHub</p>
         </header>
 
-        <!-- Sistem Navigasi Tab (Pindah Halaman) -->
+        <!-- Navigasi Tab -->
         <div class="flex border-b border-slate-200 mb-6 gap-2">
-            <button id="btnTabSimulasi" onclick="switchTab('simulasi')" 
-                class="py-2.5 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 transition-all cursor-pointer flex items-center gap-2">
-                <i class="fa-solid fa-calculator"></i> Simulasi Pinjaman
+            <button id="tab-simulasi" onclick="gantiTab('simulasi')" class="py-2.5 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 cursor-pointer">
+                <i class="fa-solid fa-calculator mr-1"></i> Simulasi
             </button>
-            <button id="btnTabMonitoring" onclick="switchTab('monitoring')" 
-                class="py-2.5 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all cursor-pointer flex items-center gap-2">
-                <i class="fa-solid fa-users-viewfinder"></i> Monitoring Angsuran Anggota
+            <button id="tab-monitoring" onclick="gantiTab('monitoring')" class="py-2.5 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 cursor-pointer">
+                <i class="fa-solid fa-users mr-1"></i> Monitoring Anggota
+            </button>
+            <button id="tab-admin" onclick="bukaPanelAdmin()" class="py-2.5 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 cursor-pointer ml-auto text-amber-600">
+                <i class="fa-solid fa-user-gear mr-1"></i> Panel Pengurus
             </button>
         </div>
 
-        <!-- ================= TAB 1: SIMULASI PINJAMAN ================= -->
-        <div id="kontenSimulasi" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Form Input (Kiri) -->
-            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 md:col-span-1 h-fit">
-                <h2 class="text-xl font-semibold mb-4 text-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-blue-500"></i> Input Pinjaman
-                </h2>
+        <!-- TAB 1: SIMULASI -->
+        <div id="konten-simulasi" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 h-fit">
+                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-calculator text-blue-500"></i> Hitung</h2>
                 <div class="mb-4">
-                    <label for="jumlahPinjaman" class="block text-sm font-medium text-slate-600 mb-1">Nominal Pinjaman (Rp)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 font-semibold">Rp</span>
-                        <input type="number" id="jumlahPinjaman" min="500000" step="50000" placeholder="Contoh: 1000000" 
-                            class="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all">
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1">* Minimal pinjaman Rp 500.000</p>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Nominal Pinjaman (Rp)</label>
+                    <input type="number" id="simulasi-pinjaman" min="500000" placeholder="Contoh: 1000000" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Tenor / Jangka Waktu</label>
-                    <input type="text" value="12 Bulan (Tetap)" disabled 
-                        class="w-full px-3 py-2 border border-slate-200 bg-slate-50 text-slate-500 rounded-xl cursor-not-allowed font-medium">
-                </div>
-                <button onclick="prosesKalkulasi()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-gears"></i> Hitung Angsuran
-                </button>
+                <button onclick="hitungSimulasi()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl cursor-pointer">Hitung Angsuran</button>
             </div>
-
-            <!-- Hasil & Tabel (Kanan) -->
-            <div class="md:col-span-2 space-y-6">
-                <div id="ringkasanKalkulasi" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
-                        <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Angsuran / Bulan</p>
-                        <p id="txtAngsuran" class="text-2xl font-bold text-blue-700 mt-1">Rp 0</p>
-                    </div>
-                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl">
-                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Total Pengembalian</p>
-                        <p id="txtTotal" class="text-2xl font-bold text-emerald-700 mt-1">Rp 0</p>
-                    </div>
+            <div class="md:col-span-2 space-y-4">
+                <div id="hasil-simulasi" class="hidden grid grid-cols-2 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-2xl"><p class="text-xs text-blue-600 font-bold">Angsuran / Bulan</p><p id="txt-angsuran" class="text-2xl font-bold text-blue-700">Rp 0</p></div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><p class="text-xs text-emerald-600 font-bold">Total Kembali</p><p id="txt-total" class="text-2xl font-bold text-emerald-700">Rp 0</p></div>
                 </div>
-                <div id="wrapperTabel" class="hidden bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-                        <h3 class="font-semibold text-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-table-list text-blue-500"></i> Jadwal Pembayaran Anggota
-                        </h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100/70 text-slate-600 text-xs font-semibold uppercase tracking-wider">
-                                    <th class="py-3 px-4 text-center">Bulan Ke</th>
-                                    <th class="py-3 px-4">Angsuran Bulanan</th>
-                                    <th class="py-3 px-4">Sisa Pinjaman Pokok</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bodyTabelAngsuran" class="text-sm divide-y divide-slate-100 text-slate-600"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="placeholderState" class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center text-slate-400">
-                    <i class="fa-solid fa-circle-info text-4xl mb-3 text-slate-300"></i>
-                    <p>Masukkan nominal pinjaman di form sebelah kiri untuk melihat simulasi angsuran.</p>
+                <div id="tabel-simulasi-wrapper" class="hidden bg-white rounded-2xl border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left"><thead class="bg-slate-100 text-xs font-bold text-slate-600 uppercase"><tr><th class="p-3 text-center">Bulan</th><th class="p-3">Angsuran</th></tr></thead><tbody id="body-simulasi" class="text-sm divide-y divide-slate-100"></tbody></table>
                 </div>
             </div>
         </div>
 
+        <!-- TAB 2: MONITORING ANGGOTA -->
+        <div id="konten-monitoring" class="hidden bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-xs">
+            <table class="w-full text-left">
+                <thead class="bg-slate-100 text-xs font-bold text-slate-600 uppercase">
+                    <tr>
+                        <th class="p-4">Nama Anggota</th>
+                        <th class="p-4">Total Pinjaman</th>
+                        <th class="p-4">Angsuran / Bln</th>
+                        <th class="p-4 text-center">Bulan Ke</th>
+                        <th class="p-4">Sisa Tagihan</th>
+                        <th class="p-4 text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="body-monitoring" class="text-sm divide-y divide-slate-100 text-slate-600"></tbody>
+            </table>
+        </div>
 
-        <!-- ================= TAB 2: MONITORING ANGGOTA ================= -->
-        <div id="kontenMonitoring" class="hidden space-y-6">
-            <!-- Filter & Pencarian -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col sm:flex-row justify-between gap-4 items-center">
-                <!-- Pilihan Filter Status -->
-                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <button onclick="filterStatus('Semua')" id="btnF-Semua" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white cursor-pointer transition-colors">Semua</button>
-                    <button onclick="filterStatus('Lunas')" id="btnF-Lunas" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer transition-colors">Lunas</button>
-                    <button onclick="filterStatus('Lancar')" id="btnF-Lancar" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer transition-colors">Bayar Bulanan (Lancar)</button>
-                    <button onclick="filterStatus('Telat')" id="btnF-Telat" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer transition-colors">Telat</button>
+        <!-- TAB 3: PANEL PENGURUS -->
+        <div id="konten-admin" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs">
+                <h3 class="text-lg font-bold mb-4 text-slate-700"><i class="fa-solid fa-user-plus text-amber-500 mr-1"></i> Daftarkan Pinjaman Anggota Baru</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="text" id="adm-nama" placeholder="Nama Lengkap Anggota" class="px-3 py-2 border border-slate-200 rounded-xl">
+                    <input type="number" id="adm-pinjaman" placeholder="Jumlah Pinjaman (Min 500000)" class="px-3 py-2 border border-slate-200 rounded-xl">
                 </div>
-                <!-- Kolom Cari Nama -->
-                <div class="relative w-full sm:w-64">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="cariNama" oninput="jalankanFilter()" placeholder="Cari nama anggota..." 
-                        class="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-blue-500">
-                </div>
+                <button onclick="tambahAnggota()" class="mt-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-xl cursor-pointer">Simpan Anggota</button>
             </div>
-
-            <!-- Tabel Data Real-Time Transparansi -->
-            <div class="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100/70 text-slate-600 text-xs font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">Nama Anggota</th>
-                                <th class="py-3 px-4">Total Pinjaman</th>
-                                <th class="py-3 px-4">Angsuran / Bln</th>
-                                <th class="py-3 px-4 text-center">Bulan Berjalan</th>
-                                <th class="py-3 px-4">Sisa Tagihan</th>
-                                <th class="py-3 px-4 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyTabelMonitoring" class="text-sm divide-y divide-slate-100 text-slate-600">
-                            <!-- Data Dummy akan di-load lewat JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-xs">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-100 text-xs font-bold text-slate-600 uppercase">
+                        <tr>
+                            <th class="p-4">Nama</th>
+                            <th class="p-4">Pinjaman</th>
+                            <th class="p-4 text-center">Bulan Terbayar</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-admin" class="text-sm divide-y divide-slate-100"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- LOGIKA UTAMA PINJAMAN ---
-        function formatRupiah(angka) {
-            return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
-        }
-
-        function prosesKalkulasi() {
-            const inputPinjaman = document.getElementById('jumlahPinjaman').value;
-            const jumlahPinjaman = parseFloat(inputPinjaman);
-            if (!inputPinjaman || jumlahPinjaman < 500000) {
-                alert("Mohon masukkan nominal pinjaman minimal Rp 500.000");
-                return;
-            }
-const angsuranPerBulan = jumlahPinjaman * 0.11;const totalPengembalian = angsuranPerBulan * 12;document.getElementById('placeholderState').classList.add('hidden');document.getElementById('ringkasanKalkulasi').classList.remove('hidden');document.getElementById('wrapperTabel').classList.remove('hidden');document.getElementById('txtAngsuran').innerText = formatRupiah(angsuranPerBulan);document.getElementById('txtTotal').innerText = formatRupiah(totalPengembalian);const tableBody = document.getElementById('bodyTabelAngsuran');tableBody.innerHTML = '';let sisaPokokSebelumnya = jumlahPinjaman;const penguranganPokokPerBulan = jumlahPinjaman / 12;
-            for (let bulan = 1; bulan <= 12; bulan++) {sisaPokokSebelumnya -= penguranganPokokPerBulan;const sisaPokokTampil = sisaPokokSebelumnya < 0 ? 0 : sisaPokokSebelumnya;tableBody.insertAdjacentHTML('beforeend', <tr class="hover:bg-slate-50/80 transition-colors"> <td class="py-3 px-4 text-center font-medium text-slate-500">${bulan}</td> <td class="py-3 px-4 font-semibold text-slate-700">${formatRupiah(angsuranPerBulan)}</td> <td class="py-3 px-4 text-slate-500">${formatRupiah(sisaPokokTampil)}</td> </tr>);}}// --- DATA DUMMY MONITORING ANGGOTA ---// Di masa mendatang, data ini diambil secara real-time dari database MySQL / Firebase.const dataAnggota = [{ nama: "Budi Santoso", pinjaman: 1000000, bulanKe: 12, sisaTagihan: 0, status: "Lunas" },{ nama: "Siti Rahma", pinjaman: 500000, bulanKe: 4, sisaTagihan: 440000, status: "Lancar" },{ nama: "Andi Wijaya", pinjaman: 2000000, bulanKe: 6, sisaTagihan: 1540000, status: "Telat" },{ nama: "Dewi Lestari", pinjaman: 1500000, bulanKe: 8, sisaTagihan: 660000, status: "Lancar" },{ nama: "Eko Prasetyo", pinjaman: 500000, bulanKe: 2, sisaTagihan: 550000, status: "Telat" },{ nama: "Rina Malia", pinjaman: 1000000, bulanKe: 12, sisaTagihan: 0, status: "Lunas" }];let filterStatusAktif = "Semua";function tampilkanDataMonitoring(data) {const tableBody = document.getElementById('bodyTabelMonitoring');tableBody.innerHTML = '';if(data.length === 0) {tableBody.innerHTML = <tr><td colspan="6" class="text-center py-8 text-slate-400">Tidak ada data ditemukan.</td></tr>;return;}
-
-        data.forEach(item => {const angsuranBln = item.pinjaman * 0.11;// Set warna badge statuslet badgeStatus = '';if(item.status === 'Lunas') {badgeStatus = <span class="bg-emerald-100 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Lunas</span>;} else if(item.status === 'Lancar') {badgeStatus = <span class="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Lancar</span>;} else {badgeStatus = <span class="bg-rose-100 text-rose-700 text-xs px-2.5 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Telat</span>;}tableBody.insertAdjacentHTML('beforeend', <tr class="hover:bg-slate-50/80 transition-colors"> <td class="py-3.5 px-4 font-semibold text-slate-700">${item.nama}</td> <td class="py-3.5 px-4 text-slate-500">${formatRupiah(item.pinjaman)}</td> <td class="py-3.5 px-4 text-slate-600 font-medium">${formatRupiah(angsuranBln)}</td> <td class="py-3.5 px-4 text-center font-medium text-slate-500">${item.bulanKe} / 12</td> <td class="py-3.5 px-4 font-semibold ${item.sisaTagihan > 0 ? 'text-slate-700' : 'text-emerald-600'}">${formatRupiah(item.sisaTagihan)}</td> <td class="py-3.5 px-4 text-center">${badgeStatus}</td> </tr>);});}
-
-                     function filterStatus(status) {filterStatusAktif = status;// Atur gaya aktif tombol filterconst semuaBtn = ['Semua', 'Lunas', 'Lancar', 'Telat'];semuaBtn.forEach(s => {const btn = document.getElementById(btnF-${s});if(s === status) {btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white cursor-pointer transition-colors";} else {btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer transition-colors";}});jalankanFilter();}function jalankanFilter() {const kataKunci = document.getElementById('cariNama').value.toLowerCase();const dataTersaring = dataAnggota.filter(item => {const cocokNama = item.nama.toLowerCase().includes(kataKunci);const cocokStatus = (filterStatusAktif === "Semua") || (item.status === filterStatusAktif);return cocokNama && cocokStatus;});tampilkanDataMonitoring(dataTersaring);}// --- SISTEM PERPINDAHAN TAB Halaman ---function switchTab(tab) {const btnSimulasi = document.getElementById('btnTabSimulasi');const btnMonitoring = document.getElementById('btnTabMonitoring');const kontenSimulasi = document.getElementById('kontenSimulasi');const kontenMonitoring = document.getElementById('kontenMonitoring');if(tab === 'simulasi') {btnSimulasi.className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 transition-all cursor-pointer flex items-center gap-2";btnMonitoring.className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all cursor-pointer flex items-center gap-2";kontenSimulasi.classList.remove('hidden');kontenMonitoring.classList.add('hidden');} else {btnMonitoring.className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 transition-all cursor-pointer flex items-center gap-2";btnSimulasi.className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all cursor-pointer flex items-center gap-2";kontenSimulasi.classList.add('hidden');kontenMonitoring.classList.remove('hidden');jalankanFilter(); // Load data monitoring pertama kali}}// Load data awal di latar belakangwindow.onload = function() {tampilkanDataMonitoring(dataAnggota);};
-
-                              
+    <!-- Hubungkan ke file JavaScript Eksternal -->
+    <script src="script.js"></script>
+</body>
+</html>
