@@ -4,66 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Pengurus - Manajemen Angsuran</title>
-    <!-- Menggunakan Tailwind v3 Play CDN untuk Stabilitas & Kecepatan Load -->
-    <script src="https://tailwindcss.com"></script>
-    <!-- FontAwesome untuk Ikon -->
-    <link rel="stylesheet" href="https://cloudflare.com">
     <style>
-        body { background-color: #0f172a; font-family: sans-serif; }
+        /* CSS Murni - Tampilan Admin Gelap */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0f172a; color: #e2e8f0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; border-b: 1px solid #334155; padding-bottom: 16px; margin-bottom: 30px; gap: 16px; flex-wrap: wrap; }
+        header h1 { color: #f59e0b; font-size: 24px; }
+        header p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        .btn-link { padding: 8px 16px; background-color: #1e293b; color: #cbd5e1; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #334155; }
+        .btn-link:hover { background-color: #334155; }
+
+        /* Gerbang Keamanan */
+        .lock-screen { fixed: inset 0; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #020617; display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 999; }
+        .lock-box { background-color: #0f172a; padding: 24px; border-radius: 16px; border: 1px solid #1e293b; width: 100%; max-width: 360px; text-align: center; }
+        .lock-box h2 { font-size: 20px; margin-bottom: 6px; }
+        .lock-box p { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+        .lock-box input { width: 100%; padding: 10px; text-align: center; background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; outline: none; margin-bottom: 16px; }
+        .btn-submit { width: 100%; padding: 10px; background-color: #d97706; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* Card Form Tambah */
+        .admin-card { background-color: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+        .admin-card h3 { font-size: 16px; margin-bottom: 14px; color: #f1f5f9; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 600px) { .form-row { grid-template-columns: 1fr 1fr; } }
+        .admin-input { width: 100%; padding: 10px; background-color: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; outline: none; }
+        .btn-save { margin-top: 14px; padding: 10px 20px; background-color: #d97706; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* Tabel Gelap Admin */
+        .table-wrapper { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background-color: #334155; padding: 12px 16px; font-weight: 600; color: #cbd5e1; font-size: 12px; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #334155; color: #e2e8f0; }
+        .num-input { width: 55px; text-align: center; background-color: #0f172a; border: 1px solid #475569; color: white; border-radius: 6px; padding: 4px; outline: none; }
+        select { background-color: #0f172a; border: 1px solid #475569; color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; outline: none; }
+        .btn-del { background: none; border: none; color: #f87171; cursor: pointer; font-size: 14px; }
+        .btn-del:hover { color: #ef4444; }
+        .text-center { text-align: center; }
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 antialiased">
+<body>
 
     <!-- Gerbang Verifikasi PIN -->
-    <div id="gerbang-pin" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-2xl max-w-sm w-full text-center">
-            <i class="fa-solid fa-user-shield text-amber-500 text-4xl mb-3"></i>
-            <h2 class="text-xl font-bold mb-2">Otentikasi Pengurus</h2>
-            <p class="text-sm text-slate-400 mb-4">Masukkan PIN Keamanan untuk mengelola database pinjaman.</p>
-            <input type="password" id="input-pin" placeholder="Masukkan PIN" class="w-full text-center px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl mb-4 text-white font-bold tracking-widest focus:outline-none focus:border-amber-500">
-            <button onclick="verifikasiPIN()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 rounded-xl transition-all cursor-pointer">Masuk Panel</button>
+    <div id="gerbang-pin" class="lock-screen">
+        <div class="lock-box">
+            <h2>Otentikasi Pengurus</h2>
+            <p>Masukkan PIN Keamanan untuk mengelola database pinjaman.</p>
+            <input type="password" id="input-pin" placeholder="PIN ANDA">
+            <button onclick="verifikasiPIN()" class="btn-submit">Masuk Panel</button>
         </div>
     </div>
 
     <!-- Konten Utama Admin -->
-    <div id="konten-admin-utama" class="hidden max-w-5xl mx-auto px-4 py-8">
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-slate-800 pb-4 gap-4">
+    <div id="konten-admin-utama" class="container hidden">
+        <header>
             <div>
-                <h1 class="text-2xl font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-user-gear"></i> Panel Pengurus</h1>
-                <p class="text-sm text-slate-400">Pencatatan real-time anggota, jumlah cicilan, dan status tunggakan.</p>
+                <h1>Panel Pengurus</h1>
+                <p>Pencatatan real-time anggota, jumlah cicilan, dan status tunggakan.</p>
             </div>
-            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
-                <i class="fa-solid fa-eye mr-1"></i> Lihat Halaman Anggota
-            </a>
+            <a href="index.html" class="btn-link">Lihat Halaman Anggota</a>
         </header>
 
         <!-- Form Input Anggota Baru -->
-        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-6">
-            <h3 class="text-lg font-bold mb-4 text-slate-200"><i class="fa-solid fa-user-plus text-amber-500 mr-1"></i> Daftarkan Pinjaman Anggota Baru</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input type="text" id="adm-nama" placeholder="Nama Lengkap Anggota" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500">
-                <input type="number" id="adm-pinjaman" placeholder="Jumlah Pinjaman (Min 500000)" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500">
+        <div class="admin-card">
+            <h3>Daftarkan Pinjaman Anggota Baru</h3>
+            <div class="form-row">
+                <input type="text" id="adm-nama" placeholder="Nama Lengkap Anggota" class="admin-input">
+                <input type="number" id="adm-pinjaman" placeholder="Jumlah Pinjaman (Min 500000)" class="admin-input">
             </div>
-            <button onclick="tambahAnggota()" class="mt-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-xl cursor-pointer transition-all">Simpan Anggota Baru</button>
+            <button onclick="tambahAnggota()" class="btn-save">Simpan Anggota Baru</button>
         </div>
 
         <!-- Tabel Kontrol Manajemen -->
-        <div class="bg-slate-800 rounded-2xl border border-slate-700/60 overflow-hidden shadow-xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-700/40 text-xs font-bold text-slate-400 uppercase">
-                        <tr>
-                            <th class="p-4">Nama</th>
-                            <th class="p-4">Pinjaman</th>
-                            <th class="p-4 text-center">Bulan Terbayar</th>
-                            <th class="p-4">Status</th>
-                            <th class="p-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="body-admin" class="text-sm divide-y divide-slate-700/40 text-slate-300"></tbody>
-                </table>
-            </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Pinjaman</th>
+                        <th class="text-center">Bulan Terbayar</th>
+                        <th>Status</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="body-admin"></tbody>
+            </table>
         </div>
     </div>
 
@@ -76,7 +103,7 @@
                 document.getElementById('konten-admin-utama').classList.remove('hidden');
                 muatDataAwal();
             } else {
-                alert("PIN Salah! Akses ke panel pengurus ditolak.");
+                alert("PIN Salah! Akses ditolak.");
             }
         }
     </script>
