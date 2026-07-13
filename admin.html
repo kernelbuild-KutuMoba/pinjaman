@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Pengurus - Manajemen Angsuran</title>
+    <!-- Menggunakan Tailwind v3 Play CDN untuk Stabilitas & Kecepatan Load -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        body { background-color: #0f172a; font-family: sans-serif; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased">
+
+    <!-- Gerbang Verifikasi PIN -->
+    <div id="gerbang-pin" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-2xl max-w-sm w-full text-center">
+            <i class="fa-solid fa-user-shield text-amber-500 text-4xl mb-3"></i>
+            <h2 class="text-xl font-bold mb-2">Otentikasi Pengurus</h2>
+            <p class="text-sm text-slate-400 mb-4">Masukkan PIN Keamanan untuk mengelola database pinjaman.</p>
+            <input type="password" id="input-pin" placeholder="Masukkan PIN" class="w-full text-center px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl mb-4 text-white font-bold tracking-widest focus:outline-none focus:border-amber-500">
+            <button onclick="verifikasiPIN()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 rounded-xl transition-all cursor-pointer">Masuk Panel</button>
+        </div>
+    </div>
+
+    <!-- Konten Utama Admin -->
+    <div id="konten-admin-utama" class="hidden max-w-5xl mx-auto px-4 py-8">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-slate-800 pb-4 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-user-gear"></i> Panel Pengurus</h1>
+                <p class="text-sm text-slate-400">Pencatatan real-time anggota, jumlah cicilan, dan status tunggakan.</p>
+            </div>
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+                <i class="fa-solid fa-eye mr-1"></i> Lihat Halaman Anggota
+            </a>
+        </header>
+
+        <!-- Form Input Anggota Baru -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-6">
+            <h3 class="text-lg font-bold mb-4 text-slate-200"><i class="fa-solid fa-user-plus text-amber-500 mr-1"></i> Daftarkan Pinjaman Anggota Baru</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input type="text" id="adm-nama" placeholder="Nama Lengkap Anggota" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500">
+                <input type="number" id="adm-pinjaman" placeholder="Jumlah Pinjaman (Min 500000)" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <button onclick="tambahAnggota()" class="mt-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-xl cursor-pointer transition-all">Simpan Anggota Baru</button>
+        </div>
+
+        <!-- Tabel Kontrol Manajemen -->
+        <div class="bg-slate-800 rounded-2xl border border-slate-700/60 overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-700/40 text-xs font-bold text-slate-400 uppercase">
+                        <tr>
+                            <th class="p-4">Nama</th>
+                            <th class="p-4">Pinjaman</th>
+                            <th class="p-4 text-center">Bulan Terbayar</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-admin" class="text-sm divide-y divide-slate-700/40 text-slate-300"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function verifikasiPIN() {
+            const pin = document.getElementById('input-pin').value;
+            if (pin === "1234") {
+                document.getElementById('gerbang-pin').classList.add('hidden');
+                document.getElementById('konten-admin-utama').classList.remove('hidden');
+                muatDataAwal();
+            } else {
+                alert("PIN Salah! Akses ke panel pengurus ditolak.");
+            }
+        }
+    </script>
+</body>
+</html>
