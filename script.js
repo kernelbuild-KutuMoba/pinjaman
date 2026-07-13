@@ -1,7 +1,7 @@
 // ================= CONFIGURASI GITHUB API =================
 const CONFIG_GITHUB = {
-    username: "USERNAME_GITHUB_ANDA",       // Ganti dengan username GitHub Anda
-    repo: "NAMA_REPOSITORI_ANDA",           // Ganti dengan nama repositori web Anda
+    username: "kernelbuild-KutuMoba",       // Ganti dengan username GitHub Anda
+    repo: "pinjaman",           // Ganti dengan nama repositori web Anda
     path: "data.json",                       // Tetap data.json jika file ada di folder utama
     token: "PASTE_TOKEN_GHP_ANDA_DISINI"    // Tempelkan kode token ghp_xxx dari Langkah 1
 };
